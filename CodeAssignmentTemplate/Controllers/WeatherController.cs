@@ -35,8 +35,8 @@ public class WeatherController : ControllerBase
     /// </summary>
     [HttpGet("rainfall/{city}")]
     [ProducesResponseType(typeof(RainfallResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status501NotImplemented)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status502BadGateway)]
     public async Task<ActionResult<RainfallResponse>> GetCityRainfall(
         string city, CancellationToken ct)
