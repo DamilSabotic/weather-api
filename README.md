@@ -8,14 +8,36 @@ ASP.NET Core Web API that proxies weather data from the [SMHI open data API](htt
 dotnet run
 ```
 
-Swagger UI: http://localhost:5000/swagger/index.html
+Swagger UI: https://localhost:7092/swagger or http://localhost:5011/swagger
 
 ## Endpoints
 
 | Method | Path | Description |
 |--------|------|-------------|
 | GET | `/api/weather/temperature` | Average air temperature across all SMHI stations for the latest hour |
-| GET | `/api/weather/rainfall/{city}` | Total rainfall in mm for a city over the recent period *(not yet implemented)* |
+| GET | `/api/weather/rainfall/{city}` | Total rainfall in mm for a Swedish city over the latest ~4 months |
+
+**GET /api/weather/temperature**
+```json
+{ "averageTemperatureInCelsius": 12.3 }
+```
+
+**GET /api/weather/rainfall/Lund**
+```json
+{
+  "rainfallInMillimeters": 203.3,
+  "startDate": "2026-01-22",
+  "endDate": "2026-05-31"
+}
+```
+
+`startDate`/`endDate` reflect the actual span of data returned by SMHI — no fixed window.
+
+| Condition | Status |
+|-----------|--------|
+| Unknown city | 404 with RFC 7807 body |
+| Blank/whitespace city | 400 |
+| SMHI unreachable or no usable data | 502 |
 
 ## Testing
 
@@ -23,16 +45,7 @@ Swagger UI: http://localhost:5000/swagger/index.html
 dotnet test
 ```
 
-Unit tests cover `WeatherService` in isolation using a fake `ISmhiClient` (no HTTP calls):
-
-| Test | What it verifies |
-|------|-----------------|
-| Returns correct average | Average of valid station readings |
-| Uses first reading per station | Only the first value per station is used |
-| Ignores empty/non-numeric | Stations with missing or non-numeric values are skipped |
-| Throws on no usable readings | `SmhiUnavailableException` when all stations are invalid |
-| Throws on empty station list | `SmhiUnavailableException` when SMHI returns no stations |
-| Parses decimals under comma-decimal culture | `InvariantCulture` used — Swedish locale (`sv-SE`) doesn't break parsing |
+Unit tests cover `WeatherService` and `StationResolver` against stub/fake implementations — no live HTTP calls.
 
 ## Configuration
 

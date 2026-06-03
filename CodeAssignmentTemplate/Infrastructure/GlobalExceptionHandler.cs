@@ -29,6 +29,18 @@ internal sealed class GlobalExceptionHandler : IExceptionHandler
 
         var (status, title, detail, logLevel) = exception switch
         {
+            CityNotFoundException e =>
+                (StatusCodes.Status404NotFound,
+                 "Not Found",
+                 e.Message,
+                 LogLevel.Information),
+
+            ArgumentException e when (e.ParamName == "city") =>
+                (StatusCodes.Status400BadRequest,
+                 "Bad Request",
+                 e.Message,
+                 LogLevel.Warning),
+
             SmhiUnavailableException e =>
                 (StatusCodes.Status502BadGateway,
                  "Bad Gateway",
@@ -52,12 +64,6 @@ internal sealed class GlobalExceptionHandler : IExceptionHandler
                 (StatusCodes.Status502BadGateway,
                  "Bad Gateway",
                  "The request to SMHI timed out.",
-                 LogLevel.Warning),
-
-            NotImplementedException =>
-                (StatusCodes.Status501NotImplemented,
-                 "Not Implemented",
-                 "This endpoint is not yet implemented.",
                  LogLevel.Warning),
 
             _ =>

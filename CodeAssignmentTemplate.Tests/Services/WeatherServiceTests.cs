@@ -24,11 +24,24 @@ public class WeatherServiceTests
     }
 
     [Fact]
-    public async Task GetAverageTemperatureAsync_UsesFirstReadingPerStation()
+    public async Task GetAverageTemperatureAsync_UsesLatestReadingPerStation()
     {
-        var service = CreateService(Data(
-            Station("station-1", "10.0", "999.0"),
-            Station("station-2", "20.0", "999.0")));
+        var service = CreateService(new SmhiStationSetData
+        {
+            Station =
+            [
+                new SmhiStation { Key = "station-1", Value =
+                [
+                    new SmhiStationValue { Value = "10.0", Date = 2000L },
+                    new SmhiStationValue { Value = "999.0", Date = 1000L }
+                ]},
+                new SmhiStation { Key = "station-2", Value =
+                [
+                    new SmhiStationValue { Value = "20.0", Date = 2000L },
+                    new SmhiStationValue { Value = "999.0", Date = 1000L }
+                ]}
+            ]
+        });
 
         var response = await service.GetAverageTemperatureAsync(CancellationToken.None);
 
@@ -129,5 +142,11 @@ public class WeatherServiceTests
         {
             return Task.FromResult(_data);
         }
+
+        public Task<SmhiRainfallStations> GetRainfallStationsAsync(CancellationToken ct) =>
+            throw new NotSupportedException();
+
+        public Task<SmhiStationData> GetLatestMonthsRainfallAsync(int stationId, CancellationToken ct) =>
+            throw new NotSupportedException();
     }
 }

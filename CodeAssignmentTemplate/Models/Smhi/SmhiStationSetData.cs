@@ -22,11 +22,9 @@ public class SmhiStation
 
 public class SmhiStationValue
 {
-    /// <summary>Observation timestamp in epoch milliseconds.</summary>
     [JsonPropertyName("date")]
     public long Date { get; init; }
 
-    /// <summary>Temperature as a string, e.g. "10.9".</summary>
     [JsonPropertyName("value")]
     public string Value { get; init; } = string.Empty;
 
