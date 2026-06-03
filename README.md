@@ -8,7 +8,7 @@ ASP.NET Core Web API that proxies weather data from the [SMHI open data API](htt
 dotnet run
 ```
 
-Swagger UI: https://localhost:7092/swagger or http://localhost:5011/swagger
+Swagger UI: [http://localhost:5000/swagger/index.html](http://localhost:5000/swagger/index.html)
 
 ## Endpoints
 
